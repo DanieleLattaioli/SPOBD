@@ -1,0 +1,11 @@
+.venv/
+data_for_plot/
+generated_data/
+trained_models/
+*.csv
+*.pkl
+__pycache__/
+*.py[cod]
+*$py.class
+*.sqlite3
+*.png
