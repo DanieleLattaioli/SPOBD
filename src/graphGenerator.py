@@ -1,3 +1,4 @@
+import os
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
@@ -6,10 +7,24 @@ from scipy.spatial.distance import squareform
 from sklearn.metrics.pairwise import euclidean_distances
 
 OUT_PKL_DIR = 'generated_data'
+ER_DENSITY = 0.078
+GRAPH_TYPES = os.environ.get('GRAPH_TYPES', 'ER').split(',')
 
-def sample(N=50, n_signals=3000, rng=None):
-    # Generazione grafo Barabasi-Albert
-    G = nx.barabasi_albert_graph(N, 2, seed=int(rng.integers(1e9)))
+def sample(N=50, n_signals=3000, rng=None, graph_type='BA'):
+    """
+    Genera un grafo connesso di tipo graph_type (BA o ER) con N nodi e n_signals segnali
+    """
+
+    # Generazione grafo connesso
+    while True:
+        if graph_type == 'BA':
+            G = nx.barabasi_albert_graph(N, 2, seed=int(rng.integers(1e9)))
+        elif graph_type == 'ER':
+            G = nx.erdos_renyi_graph(N, ER_DENSITY, seed=int(rng.integers(1e9)))
+        else:
+            raise ValueError(f"graph_type sconosciuto: {graph_type}")
+        if nx.is_connected(G):
+            break
 
     # Definizioni matrici A, W ed L
     A = nx.to_numpy_array(G)
@@ -33,13 +48,14 @@ def sample(N=50, n_signals=3000, rng=None):
 
 rng = np.random.default_rng(42)
 
-for nome, n_campioni in [('train', 8000), ('val', 2000), ('test', 64)]:
-    dati = []
-    for i in range(n_campioni):
-        if i % 1000 == 0:
-            print(f'{nome}: {i}/{n_campioni}', flush=True)
-        dati.append(sample(rng=rng))
-    Y, Wv = zip(*dati)
-    pickle.dump({'y': np.array(Y), 'w': np.array(Wv)},
-                open(f'{OUT_PKL_DIR}/data_BA50_{nome}.pkl', 'wb'))
-    print(f'{nome} completato', flush=True)
+for graph_type in GRAPH_TYPES:
+    tag = f'{graph_type}50'
+    for nome, n_campioni in [('train', 8000), ('val', 2000), ('test', 64)]:
+        dati = []
+        for i in range(n_campioni):
+            dati.append(sample(rng=rng, graph_type=graph_type))
+
+        Y, Wv = zip(*dati)
+        pickle.dump({'y': np.array(Y), 'w': np.array(Wv)},
+                    open(f'{OUT_PKL_DIR}/data_{tag}_{nome}.pkl', 'wb'))
+        
