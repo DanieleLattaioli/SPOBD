@@ -1,6 +1,6 @@
-# SPOBD
+# SPOBD: Unrolling Primal-Dual Splitting for Graph Learning
 
-Il Graph Learning è la disciplina è la disciplina che, a partire dall’osservazione di segnali registrati sui nodi di un sistema, cerca di ricostruire la struttura invisibile delle relazioni
+Il Graph Learning è la disciplina che, a partire dall’osservazione di segnali registrati sui nodi di un sistema, cerca di ricostruire la struttura invisibile delle relazioni
 che ha generato o regola quei segnali. Il progetto confronta un metodo iterativo classico, **PDS** (Primal-Dual Splitting), con una sua versione _Deep Unfolding_ (**Unrolling** e **Recurrent Unrolling**), su due famiglie di grafi sintetici: **Barabási-Albert (BA)** ed **Erdős-Rényi (ER)**.
 
 ## Pipeline
